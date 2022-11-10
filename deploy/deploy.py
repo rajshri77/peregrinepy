@@ -27,15 +27,15 @@ set('keep_releases', 5)
 # Settings - remote server connection
 
 
-set('user', 'root')
-set('hosts', ['localhost'])
+set('user', 'ubuntu')
+set('hosts', ['54.212.102.22'])
 
 
 # Settings - application
 
 
-set('deploy_to', '/var/www/example_application')
-set('repository', 'https://github.com/py-mina-deploy/dummy-web-for-deployment')
+set('deploy_to', '/home/ubuntu/peregrinepy')
+set('repository', 'https://github.com/rajshri77/peregrinepy.git')
 set('branch', 'master')
 
 
@@ -77,7 +77,10 @@ def restart():
     """
     
     with cd(fetch('current_path')):
-        run('touch restart.txt')
+        run('sudo systemctl daemon-reload')
+        run('sudo systemctl restart gunicorn')
+        # run('python3 manage.py runserver 0.0.0.0:8000 &')
+        # run('touch restart.txt')
 
 
 @deploy_task(on_success=restart)
@@ -88,6 +91,15 @@ def deploy():
 
     git_clone()
     link_shared_paths()
+
+    run('source venv/bin/activate')
+    
+    
+    run('pip install -r requirements.txt')
+    # run('pip install -r requirements.txt')
+
+    # run('python3 ./manage.py makemigrations')
+    # run('python3 ./manage.py migrate')
 
 
 @setup_task
